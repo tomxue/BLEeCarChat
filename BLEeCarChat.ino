@@ -37,7 +37,7 @@ unsigned char Timer0_Count = 0;
 unsigned char temp = 0x80;
 unsigned char Shift_Count = 0;
 unsigned char Display_Word_Count = 0;
-unsigned char showWhat = 0; // defined by tomxue
+unsigned char showContent = 0; // defined by tomxue
 #define Num_Of_Word 2
 const unsigned char Word[Num_Of_Word][32] = 
 {
@@ -353,21 +353,15 @@ void loop()
           {
             digitalWrite(pin, LOW);
             pin_state[pin] = LOW;
-            showWhat = 1;
-            Shift_Count = 0;
-            Display_Word_Count = 0;
-            temp = 0x80;
-            Clear_Display();
+            showContent = 1;
+            Clear_All();
           }
           else if (mode == INPUT)
           {
             digitalWrite(pin, HIGH);
             pin_state[pin] = HIGH;
-            showWhat = 0;
-            Shift_Count = 0;
-            Display_Word_Count = 0;
-            temp = 0x80;
-            Clear_Display();
+            showContent = 0;
+            Clear_All();
           }
           else if (mode == ANALOG)
           {
@@ -376,12 +370,8 @@ void loop()
                 pinMode(PIN_TO_DIGITAL(pin), LOW);
               }
             }
-
-            showWhat = 2;
-            Shift_Count = 0;
-            Display_Word_Count = 0;
-            temp = 0x80;
-            Clear_Display();
+            showContent = 2;
+            Clear_All();
           }
           else if (mode == PWM)
           {
@@ -524,6 +514,14 @@ void loop()
 }
 
 /* -------------------------------------------display part-------------------------------------------------- */
+void Clear_All()
+{
+    Shift_Count = 0;
+    Display_Word_Count = 0;
+    temp = 0x80;
+    Clear_Display();
+}
+
 //************************************************************
 //清空缓冲区
 //************************************************************
@@ -577,20 +575,20 @@ void Calc_Shift()
 
     if(Shift_Count%16 < 8 && Display_Word_Count < Num_Of_Word)
     {
-      if(showWhat == 0)
+      if(showContent == 0)
           Shift_Bit = Word[Display_Word_Count][i]&temp;
-      else if(showWhat == 1)
+      else if(showContent == 1)
           Shift_Bit = Word2[Display_Word_Count][i]&temp;
-      else if(showWhat == 2)
+      else if(showContent == 2)
           Shift_Bit = Word3[Display_Word_Count][i]&temp;
     }
     else if(Shift_Count%16 < 16 && Display_Word_Count < Num_Of_Word)
     {
-      if(showWhat == 0)
+      if(showContent == 0)
           Shift_Bit = Word[Display_Word_Count][16+i]&temp;
-      else if(showWhat == 1)
+      else if(showContent == 1)
           Shift_Bit = Word2[Display_Word_Count][16+i]&temp;
-      else if(showWhat == 2)
+      else if(showContent == 2)
           Shift_Bit = Word3[Display_Word_Count][16+i]&temp;
     }
     else
