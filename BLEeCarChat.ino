@@ -164,7 +164,7 @@ byte reportDigitalInput()
     {
       pin_state[pin] = current_state;
       byte buf[] = {
-        'G', pin, INPUT, current_state                                          };
+        'G', pin, INPUT, current_state                                                };
       BLEMini_write_bytes(buf, 4);
 
       report = 1;
@@ -181,7 +181,7 @@ byte reportDigitalInput()
 void reportPinCapability(byte pin)
 {
   byte buf[] = {
-    'P', pin, 0x00              };
+    'P', pin, 0x00                };
   byte pin_cap = 0;
 
   if (IS_PIN_DIGITAL(pin))
@@ -209,7 +209,7 @@ void reportPinServoData(byte pin)
   byte value = pin_servo[pin];
   byte mode = pin_mode[pin];
   byte buf[] = {
-    'G', pin, mode, value              };         
+    'G', pin, mode, value                };         
   BLEMini_write_bytes(buf, 4);
 }
 
@@ -236,7 +236,7 @@ byte reportPinAnalogData()
     mode = (value_hi << 4) | mode;
 
     byte buf[] = {
-      'G', pin, mode, value                            };         
+      'G', pin, mode, value                                };         
     BLEMini_write_bytes(buf, 4);
   }
 
@@ -252,7 +252,7 @@ void reportPinDigitalData(byte pin)
   byte state = digitalRead(pin);
   byte mode = pin_mode[pin];
   byte buf[] = {
-    'G', pin, mode, state              };         
+    'G', pin, mode, state                };         
   BLEMini_write_bytes(buf, 4);
 }
 
@@ -261,7 +261,7 @@ void reportPinPWMData(byte pin)
   byte value = pin_pwm[pin];
   byte mode = pin_mode[pin];
   byte buf[] = {
-    'G', pin, mode, value              };         
+    'G', pin, mode, value                };         
   BLEMini_write_bytes(buf, 4);
 }
 
@@ -277,20 +277,25 @@ byte queryDone = false;
 void loop()
 {
   /* -------------------------------------------display part-------------------------------------------------- */
-  unsigned int i;
-  for(i = 0;i<3;i++)    // 调节显示字符的移动速度，by tomxue
+  //if(Shift_Count == (Num_Of_Word+Display_Num_Word)*16 )				//移动次数
+  if(Shift_Count == (Display_Num_Word)*16 )				//移动次数
   {
+    //Shift_Count = 0;
     Display(Display_Swap_Buffer);
-  }
-  Display_Word_Count = Shift_Count/16;				//计算当前显示第几个字
-  Calc_Shift();										
-
-  Shift_Count++;
-
-  if(Shift_Count == (Num_Of_Word+Display_Num_Word)*16 )				//移动次数
-  {
-    Shift_Count = 0;				
   }	
+  else
+  {
+    unsigned int i;
+    for(i = 0;i<3;i++)    // 调节显示字符的移动速度，by tomxue
+    {
+      Display(Display_Swap_Buffer);
+    }
+    Display_Word_Count = Shift_Count/16;				//计算当前显示第几个字
+    Calc_Shift();										
+  
+    Shift_Count++;
+  }
+
   /* -------------------------------------------display part-------------------------------------------------- */
 
 
@@ -311,7 +316,7 @@ void loop()
         queryDone = false;
 
         byte buf[] = {
-          'V', 0x00, 0x00, 0x01                                                        };
+          'V', 0x00, 0x00, 0x01                                                                };
         BLEMini_write_bytes(buf, 4);          
       }
       break;
@@ -329,7 +334,7 @@ void loop()
       {  
         byte pin = BLEMini_read();
         byte buf[] = {
-          'M', pin, pin_mode[pin]                                                        }; // report pin mode
+          'M', pin, pin_mode[pin]                                                                }; // report pin mode
         BLEMini_write_bytes(buf, 3);
       }  
       break;
@@ -516,10 +521,10 @@ void loop()
 /* -------------------------------------------display part-------------------------------------------------- */
 void Clear_All()
 {
-    Shift_Count = 0;
-    Display_Word_Count = 0;
-    temp = 0x80;
-    Clear_Display();
+  Shift_Count = 0;
+  Display_Word_Count = 0;
+  temp = 0x80;
+  Clear_Display();
 }
 
 //************************************************************
@@ -576,20 +581,20 @@ void Calc_Shift()
     if(Shift_Count%16 < 8 && Display_Word_Count < Num_Of_Word)
     {
       if(showContent == 0)
-          Shift_Bit = Word[Display_Word_Count][i]&temp;
+        Shift_Bit = Word[Display_Word_Count][i]&temp;
       else if(showContent == 1)
-          Shift_Bit = Word2[Display_Word_Count][i]&temp;
+        Shift_Bit = Word2[Display_Word_Count][i]&temp;
       else if(showContent == 2)
-          Shift_Bit = Word3[Display_Word_Count][i]&temp;
+        Shift_Bit = Word3[Display_Word_Count][i]&temp;
     }
     else if(Shift_Count%16 < 16 && Display_Word_Count < Num_Of_Word)
     {
       if(showContent == 0)
-          Shift_Bit = Word[Display_Word_Count][16+i]&temp;
+        Shift_Bit = Word[Display_Word_Count][16+i]&temp;
       else if(showContent == 1)
-          Shift_Bit = Word2[Display_Word_Count][16+i]&temp;
+        Shift_Bit = Word2[Display_Word_Count][16+i]&temp;
       else if(showContent == 2)
-          Shift_Bit = Word3[Display_Word_Count][16+i]&temp;
+        Shift_Bit = Word3[Display_Word_Count][16+i]&temp;
     }
     else
     {
@@ -792,3 +797,4 @@ void Send( unsigned char dat)
 
   }			
 }
+
