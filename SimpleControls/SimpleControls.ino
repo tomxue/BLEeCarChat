@@ -67,6 +67,15 @@ const unsigned char Word3[Num_Of_Word][32] =
   0xEF,0xEF,0xEF,0xEF,0x43,0xEF,0xEF,0xC7,0x47,0xAB,0xAB,0x6D,0xEF,0xEF,0xEF,0xEF,/*"琳",1*/
 
 };
+
+const unsigned char Word4[Num_Of_Word][32] = 
+{
+  0xF7,0xF4,0xED,0xDD,0xB4,0xF5,0xED,0xCC,0xAD,0x6D,0xED,0xED,0xED,0xED,0xEC,0xED,
+  0xFF,0x07,0xF7,0xF7,0x07,0xF7,0xF7,0x07,0xBB,0xB7,0xCF,0xDF,0xEF,0x77,0xF9,0xFF,/*"很",0*/
+
+  0xFE,0xFE,0x80,0xFE,0xD6,0xEE,0xD6,0xFE,0xD6,0xEE,0xD5,0xFD,0xFB,0xF7,0xCF,0x3F,
+  0xFF,0xFF,0x03,0xFF,0xD7,0xEF,0xD7,0xFF,0xD7,0xEF,0x57,0x7F,0xBF,0xDF,0xE7,0xF9,/*"爽",1*/
+};
 /* -------------------------------------------display part-------------------------------------------------- */
 
 #include <ble_mini.h>
@@ -157,10 +166,10 @@ void loop()
     }
     else if (data0 == 0xA0) // Command is to enable analog in reading
     {
-      if (data1 == 0x01)
-        analog_enabled = true;
-      else
-        analog_enabled = false;
+//      if (data1 == 0x01)
+//        analog_enabled = true;
+//      else
+//        analog_enabled = false;
 
       showContent = 0;
       Clear_All();
@@ -174,12 +183,15 @@ void loop()
     }
     else if (data0 == 0x03)  // Command is to control Servo pin
     {
-      myservo.write(data1);
+//      myservo.write(data1);
+
+      showContent = 3;
+      Clear_All();
     }
     else if (data0 == 0x04) // Command is to reset
     {
-      analog_enabled = false;
-      myservo.write(0);
+//      analog_enabled = false;
+//      myservo.write(0);
 //      analogWrite(PWM_PIN, 0);
 //      digitalWrite(DIGITAL_OUT_PIN, LOW);
     }
@@ -290,6 +302,8 @@ void Calc_Shift()
         Shift_Bit = Word2[Display_Word_Count][i]&temp;
       else if(showContent == 2)
         Shift_Bit = Word3[Display_Word_Count][i]&temp;
+      else if(showContent == 3)
+        Shift_Bit = Word4[Display_Word_Count][i]&temp;
     }
     else if(Shift_Count%16 < 16 && Display_Word_Count < Num_Of_Word)
     {
@@ -299,6 +313,8 @@ void Calc_Shift()
         Shift_Bit = Word2[Display_Word_Count][16+i]&temp;
       else if(showContent == 2)
         Shift_Bit = Word3[Display_Word_Count][16+i]&temp;
+      else if(showContent == 3)
+        Shift_Bit = Word4[Display_Word_Count][16+i]&temp;
     }
     else
     {
